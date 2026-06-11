@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head><title>Engineering Onboarding Guide - AcmeCorp</title></head>
+<body>
+<div class="confluence-page">
+  <div class="page-metadata">
+    <span class="author">Priya Nair</span>
+    <span class="space">Engineering</span>
+    <span class="created">2023-06-01</span>
+    <span class="last-modified">2024-01-10</span>
+    <span class="page-id">ENG-001</span>
+  </div>
+  <h1>Engineering Onboarding Guide</h1>
+  <div class="breadcrumb">Engineering > Getting Started > Onboarding</div>
+
+  <h2>Welcome to AcmeCorp Engineering</h2>
+  <p>This guide is maintained by Priya Nair (DevOps Lead). If anything is outdated, ping her on Slack @priya or create a Jira ticket under the ENG-ONBOARD epic.</p>
+
+  <h2>Access you need on Day 1</h2>
+  <ul>
+    <li>GitHub: Request access in #eng-access. Priya approves within 1 business day.</li>
+    <li>AWS: Raise a Jira ticket ENG-ACCESS with your role. Do not use personal AWS credentials ever.</li>
+    <li>LaunchDarkly (feature flags): Ask Marcus Rivera for access.</li>
+    <li>Snowflake (data warehouse): Request via James Okafor — he reviews all data access for compliance.</li>
+    <li>PagerDuty: Auto-provisioned on Day 2 by Priya's onboarding script.</li>
+  </ul>
+
+  <h2>How we deploy code</h2>
+  <p>We use GitHub Actions for CI/CD. Every PR must pass: unit tests, integration tests, and a security scan (Snyk). Deployments to production require 2 approvals — one from your team lead and one from Priya (for infrastructure changes) or Marcus (for backend/API changes).</p>
+  <p><strong>Why 2 approvals?</strong> After the outage in November 2023 caused by a single-approval deploy that broke the payments API, we changed the policy. Full post-mortem in ENG-POST-203.</p>
+
+  <h2>Our tech stack (as of Jan 2024)</h2>
+  <ul>
+    <li>Backend: Python (FastAPI) — moved from Django in mid-2023, decision made by Marcus</li>
+    <li>Frontend: React + TypeScript — Anika Sharma leads this</li>
+    <li>Database: PostgreSQL on RDS, Redis for caching</li>
+    <li>Data pipeline: Airflow + dbt + Snowflake</li>
+    <li>Infrastructure: Terraform (IaC), AWS ECS for containers</li>
+    <li>Monitoring: Datadog + PagerDuty</li>
+  </ul>
+
+  <h2>Who to ask for what</h2>
+  <ul>
+    <li>Backend API questions: Marcus Rivera (@marcus)</li>
+    <li>Frontend / UI: Anika Sharma (@anika)</li>
+    <li>Infrastructure / DevOps: Priya Nair (@priya)</li>
+    <li>Legal / Compliance / GDPR: James Okafor (@james)</li>
+    <li>Product decisions: Sarah Chen (@sarah)</li>
+    <li>Data / ML: Priya Nair (@priya) — she also leads the data team</li>
+  </ul>
+
+  <h2>On-call rotation</h2>
+  <p>All engineers join the on-call rotation after 3 months. Schedule is in PagerDuty. Escalation path: on-call engineer → Marcus (backend) or Priya (infra) → Sarah (product decisions). Never escalate directly to James unless it's a data breach — he's flagged that as a preference.</p>
+</div>
+</body>
+</html>

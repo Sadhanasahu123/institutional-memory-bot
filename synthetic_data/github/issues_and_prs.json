@@ -1,0 +1,69 @@
+[
+  {
+    "type": "pull_request",
+    "number": 234,
+    "title": "feat: NovaPay multi-provider payment abstraction layer",
+    "author": "marcus_rivera",
+    "created_at": "2024-02-12T10:00:00Z",
+    "state": "merged",
+    "merged_at": "2024-02-14T16:30:00Z",
+    "labels": ["backend", "payments", "nova-v2"],
+    "body": "## Summary\nImplements the PaymentProvider abstraction that allows swapping between Stripe, Braintree, and future providers without changing the calling code.\n\n## Key design decisions\n- Abstract base class `PaymentProvider` with normalized error codes (see `payments/base.py`)\n- Provider-specific adapters in `payments/providers/`\n- Feature flag `MULTI_PROVIDER_ENABLED` via LaunchDarkly controls rollout (ask Priya for flag access)\n\n## GDPR compliance\n- All token storage routes to EU region only (eu-west-1)\n- Redis cache TTL hardcoded to 21600s (6h) — under James's 24h limit\n- Reviewed by James Okafor on 2024-02-13 ✅\n\n## Testing\n- 94% unit test coverage on abstraction layer\n- Integration tests run against Stripe test mode and Braintree sandbox\n- Load test: 500 concurrent transactions, p99 < 200ms\n\nRelated: NOVA-112, NOVA-134",
+    "comments": [
+      {
+        "author": "priya_nair",
+        "timestamp": "2024-02-13T09:00:00Z",
+        "body": "Infrastructure approved. The EU region constraint is correctly enforced in the Terraform config. One question: what happens if the EU Redis is down? Does it fall back to local memory? That could break GDPR compliance."
+      },
+      {
+        "author": "marcus_rivera",
+        "timestamp": "2024-02-13T09:45:00Z",
+        "body": "Good catch @priya_nair. No fallback to local memory — I added a hard fail with a 503 response if EU Redis is unavailable. Better to return an error than silently store tokens outside EU. Updated in commit a3f92c."
+      },
+      {
+        "author": "james_okafor",
+        "timestamp": "2024-02-13T14:00:00Z",
+        "body": "Legal review complete. The EU-only storage and the no-fallback behavior are correct. The 6h TTL is fine. One thing to add to the PR description: document that this was reviewed for GDPR compliance so it shows up in our audit trail."
+      },
+      {
+        "author": "anika_sharma",
+        "timestamp": "2024-02-14T10:00:00Z",
+        "body": "Frontend integration tested against this branch. The normalized error codes are a huge improvement — I can now show meaningful error messages to users instead of generic 'payment failed'. Approving."
+      }
+    ]
+  },
+  {
+    "type": "issue",
+    "number": 289,
+    "title": "bug: Race condition in checkout component on fast transactions",
+    "author": "anika_sharma",
+    "created_at": "2024-02-05T15:00:00Z",
+    "state": "closed",
+    "closed_at": "2024-02-08T11:00:00Z",
+    "labels": ["bug", "frontend", "payments"],
+    "body": "## Problem\nWhen a payment completes in under 200ms (common for returning customers with stored cards), the checkout component receives both a 'processing' and 'completed' webhook event almost simultaneously. The UI briefly flashes 'Processing...' then immediately shows 'Complete', which looks broken.\n\n## Reproduction\n1. Use a Stripe test card with no 3DS\n2. Submit payment\n3. See the status flicker\n\n## Expected\nSmooth transition to 'Complete' state\n\n## Discussed in\n#engineering-general thread on 2024-02-05",
+    "comments": [
+      {
+        "author": "marcus_rivera",
+        "timestamp": "2024-02-05T16:00:00Z",
+        "body": "Root cause confirmed: the webhook processor dispatches both events with no delay because they arrive in the same 100ms window. Fix options: (1) debounce in frontend, (2) add 300ms delay in webhook queue for 'processing' status. I prefer option 2 — keeps frontend logic simple. Will implement."
+      },
+      {
+        "author": "anika_sharma",
+        "timestamp": "2024-02-08T10:00:00Z",
+        "body": "PR #291 deployed to staging. The 300ms delay in the webhook queue completely fixes the flicker. Tested across all payment methods. Closing this issue."
+      }
+    ]
+  },
+  {
+    "type": "issue",
+    "number": 301,
+    "title": "chore: Set up new engineer laptop environment",
+    "author": "new_engineer_bot",
+    "created_at": "2024-02-19T09:00:00Z",
+    "state": "open",
+    "labels": ["onboarding"],
+    "body": "Tracking checklist for new engineer onboarding (ref: ENG-001 Confluence page):\n- [ ] GitHub access granted by Priya\n- [ ] AWS IAM role assigned\n- [ ] LaunchDarkly access (Marcus)\n- [ ] Snowflake access (James approval)\n- [ ] PagerDuty auto-provisioned\n- [ ] Local dev environment setup\n- [ ] First PR reviewed and merged",
+    "comments": []
+  }
+]

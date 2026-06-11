@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head><title>GDPR Data Handling Policy - AcmeCorp</title></head>
+<body>
+<div class="confluence-page">
+  <div class="page-metadata">
+    <span class="author">James Okafor</span>
+    <span class="space">Legal & Compliance</span>
+    <span class="created">2023-09-01</span>
+    <span class="last-modified">2024-01-22</span>
+    <span class="page-id">LEGAL-204</span>
+  </div>
+  <h1>GDPR Data Handling Policy</h1>
+  <div class="breadcrumb">Legal & Compliance > Policies > GDPR</div>
+
+  <h2>Who owns this document</h2>
+  <p>James Okafor (Legal Counsel). Questions should go to James directly or via #legal-gdpr Slack channel. Do NOT ask Engineering to interpret legal obligations — always route to James first.</p>
+
+  <h2>What counts as personal data at AcmeCorp</h2>
+  <p>Per our legal review in September 2023, the following are classified as personal data under GDPR Article 4:</p>
+  <ul>
+    <li>Full name + email (any combination)</li>
+    <li>IP addresses (yes, even anonymized ranges)</li>
+    <li>Payment tokens linked to a user ID</li>
+    <li>Browser fingerprints stored longer than 24h</li>
+    <li>Device IDs linked to user accounts</li>
+  </ul>
+
+  <h2>How to handle a GDPR deletion request</h2>
+  <p>This process was updated on 2024-01-22 after the incident with the analytics pipeline (see post-mortem in LEGAL-198). Steps:</p>
+  <ol>
+    <li>User submits deletion request via privacy@acmecorp.com</li>
+    <li>James Okafor logs it in the GDPR tracker spreadsheet within 24h</li>
+    <li>Engineering receives a Jira ticket (auto-created by James) with affected user_id</li>
+    <li>Engineering must purge: primary DB, analytics warehouse (Snowflake), email logs (Mailchimp), and payment tokens (Stripe/NovaPay)</li>
+    <li>Confirmation email sent to user within 30 days</li>
+  </ol>
+  <p><strong>Critical edge case:</strong> If the user has an active subscription, do NOT delete until subscription end date. This was clarified after a legal dispute in Q3 2023.</p>
+
+  <h2>Data retention rules</h2>
+  <ul>
+    <li>User activity logs: 90 days max</li>
+    <li>Payment records: 7 years (tax law requirement — confirmed by auditor)</li>
+    <li>Support tickets: 3 years</li>
+    <li>Marketing emails: delete on unsubscribe within 48h</li>
+  </ul>
+
+  <h2>History of key decisions</h2>
+  <p>The 90-day activity log limit was debated heavily in October 2023. The Data team (led by Priya Nair) wanted 1 year for ML model training. Legal insisted on 90 days. The compromise: anonymized aggregate stats can be kept indefinitely, but individual-linked logs cannot. This decision was made in a meeting on 2023-10-15 (transcript available).</p>
+</div>
+</body>
+</html>

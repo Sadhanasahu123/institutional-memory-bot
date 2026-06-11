@@ -1,0 +1,14 @@
+langchain
+langchain-community
+langchain-core
+langchain-text-splitters
+langgraph
+transformers
+sentence-transformers
+accelerate
+bitsandbytes
+chromadb
+neo4j
+beautifulsoup4
+streamlit
+huggingface-hub

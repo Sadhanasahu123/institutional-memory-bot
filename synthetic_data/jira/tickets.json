@@ -1,0 +1,101 @@
+[
+  {
+    "issue_key": "NOVA-100",
+    "type": "Epic",
+    "summary": "NovaPay v2.0 - Multi-provider payment gateway",
+    "description": "Parent epic for all NovaPay v2.0 work. Goal: replace single Stripe dependency with multi-provider architecture. Decision made by Sarah Chen on 2024-01-28. See Confluence PROD-1042 for full spec.",
+    "status": "In Progress",
+    "priority": "High",
+    "assignee": "sarah_chen",
+    "reporter": "sarah_chen",
+    "created": "2024-01-15",
+    "updated": "2024-02-14",
+    "labels": ["payments", "q1-2024"],
+    "child_issues": ["NOVA-112", "NOVA-120", "NOVA-134", "NOVA-145"],
+    "comments": []
+  },
+  {
+    "issue_key": "NOVA-112",
+    "type": "Story",
+    "summary": "Design payment provider abstraction layer",
+    "description": "Design and implement the abstract PaymentProvider interface that normalizes behavior across Stripe, Braintree, and future providers. Must include: normalized error codes, unified webhook handling, and provider-specific adapters. Completed in GitHub PR #234.",
+    "status": "Done",
+    "priority": "High",
+    "assignee": "marcus_rivera",
+    "reporter": "sarah_chen",
+    "created": "2024-01-28",
+    "updated": "2024-02-14",
+    "labels": ["backend", "architecture"],
+    "comments": [
+      {
+        "author": "james_okafor",
+        "timestamp": "2024-02-01",
+        "body": "GDPR requirement: any storage of payment tokens in this abstraction layer must go to EU region only. I'll need to review before merge."
+      },
+      {
+        "author": "marcus_rivera",
+        "timestamp": "2024-02-01",
+        "body": "Acknowledged. I'll add a compliance checklist item to the PR and tag you for review."
+      }
+    ]
+  },
+  {
+    "issue_key": "NOVA-134",
+    "type": "Task",
+    "summary": "Frontend: Generic payment status handling component",
+    "description": "The current checkout UI is tightly coupled to Stripe's redirect flow. We need a provider-agnostic status handling component. Raised by Anika Sharma in #product-novapay on 2024-02-01.",
+    "status": "In Progress",
+    "priority": "Medium",
+    "assignee": "anika_sharma",
+    "reporter": "anika_sharma",
+    "created": "2024-02-01",
+    "updated": "2024-02-10",
+    "labels": ["frontend"],
+    "comments": []
+  },
+  {
+    "issue_key": "GDPR-089",
+    "type": "Task",
+    "summary": "GDPR deletion request: user ID 48821",
+    "description": "User submitted deletion request via privacy@acmecorp.com on 2024-02-10. Must purge: primary PostgreSQL DB, Snowflake analytics warehouse, Mailchimp email logs, and Stripe/NovaPay payment tokens. User has no active subscription so deletion can proceed immediately. Deadline: 2024-03-11 (30 days).",
+    "status": "In Progress",
+    "priority": "High",
+    "assignee": "marcus_rivera",
+    "reporter": "james_okafor",
+    "created": "2024-02-10",
+    "updated": "2024-02-10",
+    "labels": ["gdpr", "compliance", "legal"],
+    "comments": [
+      {
+        "author": "james_okafor",
+        "timestamp": "2024-02-10",
+        "body": "Confirmed: no active subscription. Proceed with full deletion. Follow the process in Confluence LEGAL-204 exactly. Confirm each system purged with a comment here."
+      },
+      {
+        "author": "marcus_rivera",
+        "timestamp": "2024-02-12",
+        "body": "Primary DB purged. Working on Snowflake — their delete propagation takes up to 24h."
+      }
+    ]
+  },
+  {
+    "issue_key": "ENG-POST-203",
+    "type": "Post-mortem",
+    "summary": "Post-mortem: Payments API outage - November 2023",
+    "description": "On 2023-11-14, a production deploy with a single approval caused a database migration to run incorrectly, resulting in 4 hours of payments downtime. Root cause: a missing null check in the migration script that was caught in code review by the second approver in staging but never in prod because staging has less data volume. Resolution: mandatory 2-approval policy for all production deploys, effective 2024-01-10. Owner of new policy: Priya Nair.",
+    "status": "Done",
+    "priority": "Critical",
+    "assignee": "priya_nair",
+    "reporter": "marcus_rivera",
+    "created": "2023-11-15",
+    "updated": "2024-01-10",
+    "labels": ["post-mortem", "reliability"],
+    "comments": [
+      {
+        "author": "sarah_chen",
+        "timestamp": "2023-11-16",
+        "body": "This cost us ~$80k in lost transactions plus SLA credits. The 2-approval policy makes sense. Priya, please also update the GitHub branch protection rules to enforce this."
+      }
+    ]
+  }
+]

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head><title>NovaPay v2.0 - Product Launch Specification</title></head>
+<body>
+<div class="confluence-page">
+  <div class="page-metadata">
+    <span class="author">Sarah Chen</span>
+    <span class="space">Product Team</span>
+    <span class="created">2024-01-15</span>
+    <span class="last-modified">2024-02-10</span>
+    <span class="page-id">PROD-1042</span>
+  </div>
+  <h1>NovaPay v2.0 - Product Launch Specification</h1>
+  <div class="breadcrumb">Product Team > Roadmap 2024 > NovaPay v2.0</div>
+
+  <h2>Overview</h2>
+  <p>NovaPay v2.0 is our next-generation payment gateway that replaces the legacy Stripe-only integration with a multi-provider architecture. This document captures all decisions made between January and February 2024 by the core product team.</p>
+
+  <h2>Key Decisions</h2>
+  <h3>Decision 1: Multi-provider vs Single-provider</h3>
+  <p>After a 3-week debate (see Slack thread in #product-novapay and Jira ticket NOVA-112), the team decided on <strong>multi-provider</strong>. The reasoning: reducing vendor lock-in after Stripe's 2023 pricing increase. Dissenting voice: Marcus Rivera argued single-provider reduces integration complexity. Final call made by Sarah Chen on 2024-01-28.</p>
+
+  <h3>Decision 2: Feature Flagging Strategy</h3>
+  <p>All new payment providers will be behind feature flags using our internal LaunchDarkly setup. This was decided in the all-hands on 2024-02-01 (transcript in /meetings/). Ownership: DevOps team (lead: Priya Nair).</p>
+
+  <h3>Decision 3: GDPR Compliance for Payment Data</h3>
+  <p>Legal (James Okafor) reviewed and confirmed: payment tokens must be stored in EU region only. No raw card data stored anywhere. PCI-DSS Level 1 compliance required before launch. See email thread from James on 2024-01-20.</p>
+
+  <h2>Timeline</h2>
+  <ul>
+    <li>2024-02-15: Backend API complete (owner: Marcus Rivera)</li>
+    <li>2024-03-01: Frontend integration (owner: Anika Sharma)</li>
+    <li>2024-03-15: Security audit (owner: James Okafor)</li>
+    <li>2024-04-01: Public launch</li>
+  </ul>
+
+  <h2>Related Resources</h2>
+  <ul>
+    <li>Jira Epic: NOVA-100</li>
+    <li>GitHub PR: #234 (backend API)</li>
+    <li>Slack: #product-novapay</li>
+  </ul>
+</div>
+</body>
+</html>

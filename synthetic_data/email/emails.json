@@ -1,0 +1,38 @@
+[
+  {
+    "message_id": "email-001",
+    "subject": "RE: NovaPay v2.0 - GDPR compliance sign-off",
+    "from": "james.okafor@acmecorp.com",
+    "to": ["sarah.chen@acmecorp.com", "marcus.rivera@acmecorp.com"],
+    "date": "2024-01-20T15:30:00Z",
+    "thread_id": "thread-gdpr-nova",
+    "body": "Hi Sarah, Marcus,\n\nI've completed my GDPR review of the NovaPay v2.0 payment token storage design.\n\nMy sign-off is conditional on the following being implemented before launch:\n1. All payment token storage must be in eu-west-1 (AWS EU Ireland) only\n2. Redis cache TTL for tokens must not exceed 24 hours\n3. The NovaPay abstraction layer must include a data deletion method that our GDPR pipeline can call (for Article 17 requests)\n4. No payment token may be logged in application logs — use a tokenized reference ID instead\n\nIf all four are met, I'll give final legal sign-off. Marcus, can you confirm in writing (this thread) once each point is implemented? I need the paper trail for our DPA audit in March.\n\nThanks,\nJames"
+  },
+  {
+    "message_id": "email-002",
+    "subject": "RE: NovaPay v2.0 - GDPR compliance sign-off",
+    "from": "marcus.rivera@acmecorp.com",
+    "to": ["james.okafor@acmecorp.com", "sarah.chen@acmecorp.com"],
+    "date": "2024-02-13T10:00:00Z",
+    "thread_id": "thread-gdpr-nova",
+    "body": "James, Sarah,\n\nConfirming all four items are implemented in GitHub PR #234:\n\n1. ✅ EU region enforced in Terraform config, hard-coded to eu-west-1. No fallback.\n2. ✅ Redis TTL set to 21,600 seconds (6 hours). Way under your limit.\n3. ✅ Added `delete_token(user_id)` method to the PaymentProvider abstract class. Our GDPR pipeline can call it.\n4. ✅ Application logs use payment_reference_id (a non-reversible hash). Actual tokens never appear in logs.\n\nPR is open for your review. Tag you on GitHub too.\n\nMarcus"
+  },
+  {
+    "message_id": "email-003",
+    "subject": "Quarterly architecture review - Django to FastAPI migration outcome",
+    "from": "marcus.rivera@acmecorp.com",
+    "to": ["engineering-team@acmecorp.com"],
+    "date": "2023-08-01T09:00:00Z",
+    "thread_id": "thread-fastapi-migration",
+    "body": "Team,\n\nAs promised, here's the summary of the Django → FastAPI migration decision.\n\nWhy we moved:\n- Django's ORM was causing N+1 queries in our payment processing pipeline that were hard to fix without rewriting large parts of the codebase\n- FastAPI's async support (via asyncio) lets us handle concurrent webhook processing much better — we were dropping webhooks under load with Django's sync views\n- Performance tests showed FastAPI handling 3.2x more requests/second for our payment endpoints\n\nWhat we kept from Django:\n- We're still using Alembic for migrations (not Django's migration system obviously, but same concept)\n- The admin panel is staying as a separate Django app for internal tooling — the cost of migrating it wasn't worth it\n\nTimeline: migration is complete for all core APIs as of July 2023. The admin Django app stays. Any new endpoints must be FastAPI.\n\nIf you're onboarding and see Django code — it's the admin panel, leave it alone unless you know what you're doing.\n\nMarcus"
+  },
+  {
+    "message_id": "email-004",
+    "subject": "RE: Log retention policy - data team exception request",
+    "from": "james.okafor@acmecorp.com",
+    "to": ["priya.nair@acmecorp.com", "sarah.chen@acmecorp.com"],
+    "date": "2023-10-16T09:00:00Z",
+    "thread_id": "thread-retention",
+    "body": "Priya, Sarah,\n\nFollowing yesterday's meeting, I'm documenting the agreed exception to the 90-day retention policy for the data/ML team:\n\n**What's allowed:** Aggregated behavioral data with no user_id, no device fingerprint, and no IP address may be retained indefinitely for ML model training purposes.\n\n**What's NOT allowed:** Any data that could re-identify an individual, even indirectly. This includes: small cohort sizes (< 100 users), sequential cohort IDs that could be correlated with signup dates, or any combination of attributes that narrows down to fewer than 100 users.\n\n**Process:** Priya's team must submit the proposed anonymization schema to me for review before implementing any new data retention beyond 90 days. I'll respond within 3 business days.\n\nThis exception applies only to the data/ML team and requires annual re-confirmation.\n\nJames\n\nP.S. This is now in the GDPR policy Confluence page (LEGAL-204)."
+  }
+]
