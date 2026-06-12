@@ -12,3 +12,5 @@ neo4j
 beautifulsoup4
 streamlit
 huggingface-hub
+
+gradio
